@@ -45,6 +45,7 @@ from sympy import (
     # `trunc` defined below
 )
 from sympy import sign as _sign, Add as _Add, oo as _oo, nan as _nan, S as _S
+from functools import reduce as _reduce
 
 
 def copysign(x, y):
@@ -83,7 +84,7 @@ def fsum(iterable):
 
     Return an accurate floating point sum of values in the iterable.
     """
-    return reduce(_Add, iterable)
+    return _reduce(_Add, iterable)
 
 
 def hypot(x, y):

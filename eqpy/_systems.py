@@ -46,13 +46,13 @@ class BaseSystem(object):
             return self.symbols[name]
 
         prefix = (
-                  not self.prefix_exclude and name in self.prefix_include or
-                  not self.prefix_include and name not in self.prefix_exclude
-                 ) and self.prefix or ''
+            not self.prefix_exclude and name in self.prefix_include or
+            not self.prefix_include and name not in self.prefix_exclude
+        ) and self.prefix or ''
         suffix = (
-                  not self.suffix_exclude and name in self.suffix_include or
-                  not self.suffix_include and name not in self.suffix_exclude
-                 ) and self.suffix or ''
+            not self.suffix_exclude and name in self.suffix_include or
+            not self.suffix_include and name not in self.suffix_exclude
+        ) and self.suffix or ''
 
         if isinstance(name, types.IntType):
             # all integers are currently treated as dummy variables
@@ -97,7 +97,7 @@ class System(object):
         self[...].equation(name, value)
 
     def __getitem__(self, key):
-        if isinstance(key, types.EllipsisType):
+        if isinstance(key, type(Ellipsis)):
             return self.__dict__[...]
         elif isinstance(key, types.IntType):
             return self[...].symbol(key)
