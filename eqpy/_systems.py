@@ -2,10 +2,10 @@ import itertools
 import types
 import sympy
 
+from ._compatibility import range, integer_types, ellipsis_type
 from ._utils import isiterable
 
 
-# ignore=['__methods__', 'trait_names', '__members__', '_getAttributeNames']
 class BaseSystem(object):
     def __init__(self, **kwargs):
         """TODO
@@ -54,7 +54,7 @@ class BaseSystem(object):
             not self.suffix_include and name not in self.suffix_exclude
         ) and self.suffix or ''
 
-        if isinstance(name, types.IntType):
+        if isinstance(name, integer_types):
             # all integers are currently treated as dummy variables
             fullname = prefix + str(name) + suffix
             symbol = sympy.Dummy(fullname)
@@ -97,9 +97,9 @@ class System(object):
         self[...].equation(name, value)
 
     def __getitem__(self, key):
-        if isinstance(key, type(Ellipsis)):
+        if isinstance(key, ellipsis_type):
             return self.__dict__[...]
-        elif isinstance(key, types.IntType):
+        elif isinstance(key, integer_types):
             return self[...].symbol(key)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):
             return self[...].equations[key]
@@ -112,7 +112,7 @@ class System(object):
             return self[...].userdict[key]
 
     def __setitem__(self, key, value):
-        if isinstance(key, types.IntType):
+        if isinstance(key, integer_types):
             symbol = self[...].symbol(key)
             self[...].equation(symbol, value)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):
