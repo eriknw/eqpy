@@ -1,0 +1,5 @@
+#!/bin/sh
+# Script Erik uses to perform continuous testing and reporting.
+# Depends on `nose`, `coverage`, `pep8`, and `conttest`; all pip-installable:
+# `pip install nose coverage pep8 conttest --use-mirrors`
+conttest 'clear && coverage run --source=eqpy $(which nosetests) && coverage report --show-missing && echo && pep8 eqpy'
