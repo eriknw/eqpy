@@ -68,9 +68,14 @@ def test_copysign():
 
 
 def test_expm1():
-    assert isnear(math.expm1(0), expm1(0))
-    assert isnear(math.expm1(0.001), expm1(0.001))
-    assert isnear(math.expm1(1.001), expm1(1.001))
+    if hasattr(math, 'expm1'):
+        assert isnear(math.expm1(0), expm1(0))
+        assert isnear(math.expm1(0.001), expm1(0.001))
+        assert isnear(math.expm1(1.001), expm1(1.001))
+    else:
+        assert isnear(0, expm1(0))
+        assert isnear(0.0010005, expm1(0.001))
+        assert isnear(1.72100147, expm1(1.001))
 
 
 def test_frexp():

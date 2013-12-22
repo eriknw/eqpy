@@ -45,10 +45,12 @@ class BaseSystem(object):
         if name in self.symbols:
             return self.symbols[name]
 
-        prefix = (not self.prefix_exclude and name in self.prefix_include or
+        prefix = (
+                  not self.prefix_exclude and name in self.prefix_include or
                   not self.prefix_include and name not in self.prefix_exclude
                  ) and self.prefix or ''
-        suffix = (not self.suffix_exclude and name in self.suffix_include or
+        suffix = (
+                  not self.suffix_exclude and name in self.suffix_include or
                   not self.suffix_include and name not in self.suffix_exclude
                  ) and self.suffix or ''
 
