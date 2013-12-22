@@ -1,6 +1,7 @@
 import sys
 import types
 import sympy
+from eqpy._utils import isdunder
 
 
 constants = ['Catalan', 'E', 'EulerGamma', 'GoldenRatio', 'I', 'nan',
@@ -20,7 +21,10 @@ class NumsModule(types.ModuleType):
             self.__dict__[attr] = getattr(sympy, attr)
 
     def __setattr__(self, name, val):
-        self.__dict__[name] = sympy.sympify(val)
+        if isdunder(name):
+            self.__dict__[name] = val
+        else:
+            self.__dict__[name] = sympy.sympify(val)
 
 
 self = sys.modules[__name__]
