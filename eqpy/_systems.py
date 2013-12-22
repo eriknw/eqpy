@@ -103,7 +103,7 @@ class System(object):
             return self[...].symbol(key)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):
             return self[...].equations[key]
-        elif isinstance(key, types.SliceType):
+        elif isinstance(key, slice):
             if key.stop is None:
                 raise ValueError('slice must include stop index')
             indices = range(key.start or 0, key.stop, key.step or 1)
@@ -117,7 +117,7 @@ class System(object):
             self[...].equation(symbol, value)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):
             self[...].equation(key, value)
-        elif isinstance(key, types.SliceType):
+        elif isinstance(key, slice):
             if key.stop is None:
                 raise ValueError('slice must include stop index')
             indices = range(key.start or 0, key.stop, key.step or 1)

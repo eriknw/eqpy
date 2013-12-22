@@ -24,8 +24,9 @@ from sympy import (
     tan,
     tanh,
 )
-from eqpy.math import log10
-from sympy import S as _S, nan as _nan, Abs as _Abs, I as _I
+from eqpy.math import log10, isfinite as _isfinite, isinf as _isinf
+from sympy import (S as _S, nan as _nan, Abs as _Abs, I as _I, re as _re,
+                   im as _im)
 
 
 def isfinite(x):
@@ -33,7 +34,7 @@ def isfinite(x):
     Return True if both the real and imag parts of z are finite, else False.
     """
     x = _S(x)
-    return not isnan(x) and x.is_bounded
+    return _isfinite(_re(x)) and _isfinite(_im(x))
 
 
 def isinf(x):
@@ -41,7 +42,7 @@ def isinf(x):
     Checks if the real or imaginary part of z is infinite.
     """
     x = _S(x)
-    return not isnan(x) and not x.is_bounded
+    return _isinf(_re(x)) or _isinf(_im(x))
 
 
 def isnan(x):
