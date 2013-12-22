@@ -13,6 +13,8 @@ env:
 install:
     - pip install coverage --use-mirrors
     - pip install pep8 --use-mirrors
+    - pip install numpy --use-mirrors
+    - pip install sympy --use-mirrors
 
 # command to run tests
 # require 100% coverage (not including test files) to pass Travis CI test
