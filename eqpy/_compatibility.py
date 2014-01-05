@@ -1,5 +1,4 @@
 import sys
-import types
 
 PY3 = sys.version_info[0] > 2
 
