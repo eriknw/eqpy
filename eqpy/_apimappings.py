@@ -66,7 +66,12 @@ def isinf(x):
     Check if float x is infinite (positive or negative).
     """
     x = S(x)
-    return x == oo or x == -oo
+    if x == oo or x == -oo:
+        return True
+    elif callable(getattr(x, 'n', None)):
+        val = x.n()
+        return val == oo or val == -oo
+    return False
 
 
 def isnan(x):
@@ -267,7 +272,7 @@ mathtosympy = {
     'fabs': 'Abs',
     'factorial': 'factorial',
     'floor': 'floor',
-    'fmod': 'Mod',
+    # 'fmod': fmod,  # SKIPPED: not consistent; depends on architecture
     'frexp': frexp,
     'fsum': fsum,
     'gamma': 'gamma',

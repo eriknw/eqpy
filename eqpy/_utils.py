@@ -20,7 +20,10 @@ def raises(err, lamda):
 def isnear(a, b, rtol=1e-05, atol=1e-08):
     if isiterable(a) and isiterable(b):
         return all(isnear(x, y, rtol=rtol, atol=atol) for x, y in zip(a, b))
-    return abs(a - b) < atol + rtol*abs(b)
+    try:
+        return bool(abs(a - b) < atol + rtol*abs(b))
+    except TypeError:
+        return False
 
 
 def isdunder(name):
