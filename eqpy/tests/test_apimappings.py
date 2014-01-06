@@ -110,7 +110,7 @@ modules = {
 }
 
 skip = {
-    'math': ['isfinite', 'log2'],
+    'math': ['expm1', 'isfinite', 'log2'],
     'cmath': ['isfinite'],
     'numpy': [],
 }
@@ -204,7 +204,9 @@ def test_domains():
             sympyval = sympyfunc(*args)
             for othermodule, othername in mappings.items():
                 otherfunc = getattr(modules[othermodule], othername, None)
-                assert otherfunc is not None or othername in skip[othermodule]
+                if otherfunc is None and othername not in skip[othermodule]:
+                    print othermodule, othername
+                    getattr(modules[othermodule], othername)
                 if otherfunc is None:
                     continue
                 otherval = otherfunc(*args)
