@@ -4,16 +4,18 @@ import sympy
 
 from eqpy.math import (
     acos, acosh, asin, asinh, atan, atan2, atanh, ceil, copysign, cos, cosh,
-    degrees, e, erf, erfc, exp, expm1, fabs, factorial, floor, fmod, frexp,
+    degrees, e, erf, erfc, exp, expm1, fabs, factorial, floor, frexp,
     fsum, gamma, hypot, isfinite, isinf, isnan, ldexp, lgamma, log, log10,
     log1p, log2, modf, pi, pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
 )
 from eqpy._utils import isnear
 
+skip = ['fmod']
+
 
 def test_alldefined():
     for name in dir(math):
-        if not name.startswith('_'):
+        if not name.startswith('_') and name not in skip:
             assert hasattr(eqpy.math, name)
 
 
@@ -106,6 +108,7 @@ def test_isinf():
     assert not isinf(sympy.nan)
     assert math.isinf(1.0) == isinf(1.0)
     assert math.isinf(0) == isinf(0)
+    assert isinf(pi * float('inf'))
 
 
 def test_isfinite():
