@@ -1,3 +1,4 @@
+from __future__ import print_function
 import cmath
 import math
 import random
@@ -110,7 +111,7 @@ modules = {
 }
 
 skip = {
-    'math': ['expm1', 'isfinite', 'log2'],
+    'math': ['erf', 'erfc', 'expm1', 'isfinite', 'log2'],
     'cmath': ['isfinite'],
     'numpy': [],
 }
@@ -205,7 +206,7 @@ def test_domains():
             for othermodule, othername in mappings.items():
                 otherfunc = getattr(modules[othermodule], othername, None)
                 if otherfunc is None and othername not in skip[othermodule]:
-                    print othermodule, othername
+                    print(othermodule, othername)
                     getattr(modules[othermodule], othername)
                 if otherfunc is None:
                     continue
@@ -215,7 +216,7 @@ def test_domains():
                 res3 = isnan(sympyval) and isnan(otherval)
                 res4 = otherval == sympyval
                 if not (res1 or res2 or res3 or res4):
-                    print othermodule, othername, args, sympyval, otherval
+                    print(othermodule, othername, args, sympyval, otherval)
                 assert res1 or res2 or res3 or res4
 
 
