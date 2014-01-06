@@ -70,7 +70,7 @@ domains = {
     'asin': '[-1:1]',
     'asinh': '[-inf:inf]',
     'atan': '[-inf:inf]',
-    'atan2': ('(-inf:inf)', '(-inf:inf)'),
+    'atan2': ('nonzero(-inf:inf)', 'nonzero(-inf:inf)'),
     'atanh': '(-1:1)',
     'ceiling': '(-inf:inf)',
     'conjugate': 'complex',
