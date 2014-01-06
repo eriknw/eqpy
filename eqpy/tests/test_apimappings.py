@@ -111,7 +111,7 @@ modules = {
 }
 
 skip = {
-    'math': ['erf', 'erfc', 'expm1', 'isfinite', 'log2'],
+    'math': ['erf', 'erfc', 'expm1', 'gamma', 'isfinite', 'lgamma', 'log2'],
     'cmath': ['isfinite'],
     'numpy': [],
 }
@@ -194,7 +194,7 @@ def get_domain(domain):
 
 
 def test_domains():
-    for sympyfunc in sorted(sympymappings):
+    for sympyfunc in sorted(sympymappings, key=lambda x: str(x)):
         if sympyfunc in constants:
             continue
         mappings = sympymappings[sympyfunc]
