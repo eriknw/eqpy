@@ -158,7 +158,7 @@ modules = {
 }
 
 skip = {
-    "math": {"erf", "erfc", "expm1", "gamma", "isfinite", "isqrt", "lgamma", "log2"},
+    "math": {"erf", "erfc", "expm1", "gamma", "isfinite", "isqrt", "lgamma", "log2", "prod"},
     "cmath": {"isfinite"},
     "numpy": set(),
 }
