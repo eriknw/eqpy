@@ -90,6 +90,7 @@ from eqpy.numpy import (
 
 def test_alldefined():
     skipped = [
+        "_arg",
         "bitwise_and",
         "bitwise_not",
         "bitwise_or",
