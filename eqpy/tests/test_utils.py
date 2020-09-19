@@ -2,7 +2,7 @@ from eqpy._utils import isiterable, isnear, raises, isdunder
 
 
 def test_isiterable():
-    assert isiterable('asdf')
+    assert isiterable("asdf")
     assert isiterable([1, 2, 3])
     assert isiterable((1, 2, 3))
     assert isiterable(range(10))
@@ -19,19 +19,19 @@ def test_isnear():
 
 def test_raises():
     assert not raises(None, lambda: None)
-    assert raises(ZeroDivisionError, lambda: 1/0)
-    assert raises(ZeroDivisionError, lambda: raises(TypeError, lambda: 1/0))
+    assert raises(ZeroDivisionError, lambda: 1 / 0)
+    assert raises(ZeroDivisionError, lambda: raises(TypeError, lambda: 1 / 0))
 
 
 def test_isdunder():
-    assert isdunder('__a__')
-    assert isdunder('__asdfasdf__')
-    assert not isdunder('__')
-    assert not isdunder('___')
-    assert not isdunder('____')
-    assert not isdunder('_____')
-    assert not isdunder('__foo___')
-    assert not isdunder('___foo__')
-    assert not isdunder('foo__')
-    assert not isdunder('__foo')
-    assert not isdunder('foo')
+    assert isdunder("__a__")
+    assert isdunder("__asdfasdf__")
+    assert not isdunder("__")
+    assert not isdunder("___")
+    assert not isdunder("____")
+    assert not isdunder("_____")
+    assert not isdunder("__foo___")
+    assert not isdunder("___foo__")
+    assert not isdunder("foo__")
+    assert not isdunder("__foo")
+    assert not isdunder("foo")

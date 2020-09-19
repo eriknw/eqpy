@@ -16,12 +16,12 @@ def test_constants():
 
 
 def test_sympify():
-    eqpy.nums.x = '1/2'
-    assert eqpy.nums.x == sympy.S('1/2')
-    assert eqpy.nums('2/3') == sympy.S('2/3')
-    assert raises(sympy.SympifyError, lambda: eqpy.nums('1.2.3'))
+    eqpy.nums.x = "1/2"
+    assert eqpy.nums.x == sympy.S("1/2")
+    assert eqpy.nums("2/3") == sympy.S("2/3")
+    assert raises(sympy.SympifyError, lambda: eqpy.nums("1.2.3"))
 
 
 def test_dunders():
-    eqpy.nums.__mydunder__ = '1/2'
-    assert eqpy.nums.__mydunder__ == '1/2'
+    eqpy.nums.__mydunder__ = "1/2"
+    assert eqpy.nums.__mydunder__ == "1/2"

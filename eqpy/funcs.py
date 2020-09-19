@@ -16,7 +16,7 @@ for name, value in sympy.functions.__dict__.items():
         d[name] = value
 
 # add additional functions from `sympy`
-for name in ['rad', 'deg']:
+for name in ["rad", "deg"]:
     d[name] = getattr(sympy, name)
 
 del name

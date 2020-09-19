@@ -11,7 +11,7 @@ class VarsModule(types.ModuleType):
         super(VarsModule, self).__init__(self_module.__name__)
         self.__path__ = []
         self._self_module_ = self_module
-        for attr in ['__builtins__', '__doc__', '__file__', '__package__']:
+        for attr in ["__builtins__", "__doc__", "__file__", "__package__"]:
             setattr(self, attr, getattr(self_module, attr, None))
 
     def __getattr__(self, name):

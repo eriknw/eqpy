@@ -3,19 +3,58 @@ import eqpy
 import sympy
 
 from eqpy.math import (
-    acos, acosh, asin, asinh, atan, atan2, atanh, ceil, copysign, cos, cosh,
-    degrees, e, erf, erfc, exp, expm1, fabs, factorial, floor, frexp,
-    fsum, gamma, hypot, isfinite, isinf, isnan, ldexp, lgamma, log, log10,
-    log1p, log2, modf, pi, pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
+    acos,
+    acosh,
+    asin,
+    asinh,
+    atan,
+    atan2,
+    atanh,
+    ceil,
+    copysign,
+    cos,
+    cosh,
+    degrees,
+    e,
+    erf,
+    erfc,
+    exp,
+    expm1,
+    fabs,
+    factorial,
+    floor,
+    frexp,
+    fsum,
+    gamma,
+    hypot,
+    isfinite,
+    isinf,
+    isnan,
+    ldexp,
+    lgamma,
+    log,
+    log10,
+    log1p,
+    log2,
+    modf,
+    pi,
+    pow,
+    radians,
+    sin,
+    sinh,
+    sqrt,
+    tan,
+    tanh,
+    trunc,
 )
 from eqpy._utils import isnear
 
-skip = {'fmod', 'remainder'}
+skip = {"fmod", "remainder"}
 
 
 def test_alldefined():
     for name in dir(math):
-        if not name.startswith('_') and name not in skip:
+        if not name.startswith("_") and name not in skip:
             assert hasattr(eqpy.math, name)
 
 
@@ -70,7 +109,7 @@ def test_copysign():
 
 
 def test_expm1():
-    if hasattr(math, 'expm1'):
+    if hasattr(math, "expm1"):
         assert isnear(math.expm1(0), expm1(0))
         assert isnear(math.expm1(0.001), expm1(0.001))
         assert isnear(math.expm1(1.001), expm1(1.001))
@@ -90,8 +129,7 @@ def test_frexp():
 
 def test_fsum():
     assert isnear(math.fsum(range(10)), fsum(range(10)))
-    assert isnear(math.fsum(0.3 * x for x in range(10)),
-                  fsum(0.3 * x for x in range(10)))
+    assert isnear(math.fsum(0.3 * x for x in range(10)), fsum(0.3 * x for x in range(10)))
     assert isnear(math.fsum([1]), fsum([1]))
 
 
@@ -100,39 +138,39 @@ def test_hypot():
 
 
 def test_isinf():
-    assert math.isinf(float('inf')) == isinf(float('inf'))
-    assert math.isinf(-float('inf')) == isinf(-float('inf'))
-    assert math.isinf(float('nan')) == isinf(float('nan'))
+    assert math.isinf(float("inf")) == isinf(float("inf"))
+    assert math.isinf(-float("inf")) == isinf(-float("inf"))
+    assert math.isinf(float("nan")) == isinf(float("nan"))
     assert isinf(sympy.oo)
     assert isinf(-sympy.oo)
     assert not isinf(sympy.nan)
     assert math.isinf(1.0) == isinf(1.0)
     assert math.isinf(0) == isinf(0)
-    assert isinf(pi * float('inf'))
+    assert isinf(pi * float("inf"))
 
 
 def test_isfinite():
     assert not isfinite(sympy.oo)
     assert not isfinite(-sympy.oo)
     assert not isfinite(sympy.nan)
-    if hasattr(math, 'isfinite'):
-        assert math.isfinite(float('inf')) == isfinite(float('inf'))
-        assert math.isfinite(-float('inf')) == isfinite(-float('inf'))
-        assert math.isfinite(float('nan')) == isfinite(float('nan'))
+    if hasattr(math, "isfinite"):
+        assert math.isfinite(float("inf")) == isfinite(float("inf"))
+        assert math.isfinite(-float("inf")) == isfinite(-float("inf"))
+        assert math.isfinite(float("nan")) == isfinite(float("nan"))
         assert math.isfinite(1.0) == isfinite(1.0)
         assert math.isfinite(0) == isfinite(0)
     else:
-        assert not isfinite(float('inf'))
-        assert not isfinite(-float('inf'))
-        assert not isfinite(float('nan'))
+        assert not isfinite(float("inf"))
+        assert not isfinite(-float("inf"))
+        assert not isfinite(float("nan"))
         assert isfinite(1.0)
         assert isfinite(0)
 
 
 def test_isnan():
-    assert math.isnan(float('inf')) == isnan(float('inf'))
-    assert math.isnan(-float('inf')) == isnan(-float('inf'))
-    assert math.isnan(float('nan')) == isnan(float('nan'))
+    assert math.isnan(float("inf")) == isnan(float("inf"))
+    assert math.isnan(-float("inf")) == isnan(-float("inf"))
+    assert math.isnan(float("nan")) == isnan(float("nan"))
     assert not isnan(sympy.oo)
     assert not isnan(-sympy.oo)
     assert isnan(sympy.nan)
@@ -159,7 +197,7 @@ def test_log1p():
 
 
 def test_log2():
-    if hasattr(math, 'log2'):
+    if hasattr(math, "log2"):
         assert isnear(math.log2(0.1), log2(0.1))
         assert isnear(math.log2(1), log2(1))
         assert isnear(math.log2(123.45), log2(123.45))

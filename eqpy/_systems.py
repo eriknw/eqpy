@@ -1,5 +1,4 @@
 import itertools
-import types
 import sympy
 
 from ._compatibility import range, integer_types, ellipsis_type
@@ -19,13 +18,13 @@ class BaseSystem(object):
             suffix_exclude
             dummies
         """
-        self.prefix = kwargs.get('prefix', '')
-        self.prefix_include = kwargs.get('prefix_include', [])
-        self.prefix_exclude = kwargs.get('prefix_exclude', [])
-        self.suffix = kwargs.get('suffix', '')
-        self.suffix_include = kwargs.get('suffix_include', [])
-        self.suffix_exclude = kwargs.get('suffix_exclude', [])
-        self.dummies = kwargs.get('dummies', [])
+        self.prefix = kwargs.get("prefix", "")
+        self.prefix_include = kwargs.get("prefix_include", [])
+        self.prefix_exclude = kwargs.get("prefix_exclude", [])
+        self.suffix = kwargs.get("suffix", "")
+        self.suffix_include = kwargs.get("suffix_include", [])
+        self.suffix_exclude = kwargs.get("suffix_exclude", [])
+        self.dummies = kwargs.get("dummies", [])
         if self.dummies is False:
             self.dummies = []
         self.symbols = {}
@@ -35,24 +34,34 @@ class BaseSystem(object):
         self.assumptions = set()
         # error if both include and exclude are defined
         if self.prefix_include and self.prefix_exclude:
-            raise ValueError('"prefix_include" and "prefix_exclude" may not '
-                             'both be specified')
+            raise ValueError('"prefix_include" and "prefix_exclude" may not ' "both be specified")
         if self.suffix_include and self.suffix_exclude:
-            raise ValueError('"suffix_include" and "suffix_exclude" may not '
-                             'both be specified')
+            raise ValueError('"suffix_include" and "suffix_exclude" may not ' "both be specified")
 
     def symbol(self, name):
         if name in self.symbols:
             return self.symbols[name]
 
         prefix = (
-            not self.prefix_exclude and name in self.prefix_include or
-            not self.prefix_include and name not in self.prefix_exclude
-        ) and self.prefix or ''
+            (
+                not self.prefix_exclude
+                and name in self.prefix_include
+                or not self.prefix_include
+                and name not in self.prefix_exclude
+            )
+            and self.prefix
+            or ""
+        )
         suffix = (
-            not self.suffix_exclude and name in self.suffix_include or
-            not self.suffix_include and name not in self.suffix_exclude
-        ) and self.suffix or ''
+            (
+                not self.suffix_exclude
+                and name in self.suffix_include
+                or not self.suffix_include
+                and name not in self.suffix_exclude
+            )
+            and self.suffix
+            or ""
+        )
 
         if isinstance(name, integer_types):
             # all integers are currently treated as dummy variables
@@ -71,8 +80,7 @@ class BaseSystem(object):
 
     def equation(self, name, expr):
         if isinstance(expr, sympy.Equality):
-            self.equations[name] = [sympy.Eq(name, expr.lhs),
-                                    sympy.Eq(name, expr.rhs)]
+            self.equations[name] = [sympy.Eq(name, expr.lhs), sympy.Eq(name, expr.rhs)]
         elif isiterable(expr):
             self.equations[name] = list(sympy.Eq(name, ex) for ex in expr)
         else:
@@ -105,7 +113,7 @@ class System(object):
             return self[...].equations[key]
         elif isinstance(key, slice):
             if key.stop is None:
-                raise ValueError('slice must include stop index')
+                raise ValueError("slice must include stop index")
             indices = range(key.start or 0, key.stop, key.step or 1)
             return tuple(self[...].symbol(index) for index in indices)
         else:
@@ -119,10 +127,10 @@ class System(object):
             self[...].equation(key, value)
         elif isinstance(key, slice):
             if key.stop is None:
-                raise ValueError('slice must include stop index')
+                raise ValueError("slice must include stop index")
             indices = range(key.start or 0, key.stop, key.step or 1)
             if len(indices) != len(value):
-                raise ValueError('slice and values must have same length')
+                raise ValueError("slice and values must have same length")
             for i, index in enumerate(indices):
                 symbol = self[...].symbol(index)
                 self[...].equation(symbol, value[i])

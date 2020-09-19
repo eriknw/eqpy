@@ -8,4 +8,4 @@ from . import nums
 from . import vars
 from sympy import S
 
-__version__ = '0.0.1'
+__version__ = "0.0.1"
