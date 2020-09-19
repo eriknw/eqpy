@@ -45,7 +45,6 @@ from eqpy._apimappings import (
     subtract,
 )
 from eqpy._utils import isnear
-from eqpy._compatibility import zip
 
 # This file is a little ugly and sloppy, but it works well enough
 
@@ -159,8 +158,13 @@ modules = {
 }
 
 skip = {
-    "math": {"erf", "erfc", "expm1", "gamma", "isfinite", "lgamma", "log2"},
+    "math": {"erf", "erfc", "expm1", "gamma", "isfinite", "isqrt", "lgamma", "log2"},
     "cmath": {"isfinite"},
+    "numpy": set(),
+}
+always_skip = {
+    "math": set(),
+    "cmath": set(),
     "numpy": {"divmod"},
 }
 
@@ -282,11 +286,10 @@ def test_domains():
                 print(sympyfunc, args)
                 raise
             for othermodule, othername in mappings.items():
-                if othername in skip[othermodule]:
+                if othername in always_skip[othermodule]:
                     continue
                 otherfunc = getattr(modules[othermodule], othername, None)
-                if otherfunc is None:  #  and othername not in skip[othermodule]:
-                    print(othermodule, othername)
+                if otherfunc is None and othername not in skip[othermodule]:
                     getattr(modules[othermodule], othername)
                 if otherfunc is None:
                     continue

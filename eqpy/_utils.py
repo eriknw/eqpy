@@ -1,6 +1,3 @@
-from ._compatibility import zip
-
-
 def isiterable(x):
     try:
         iter(x)

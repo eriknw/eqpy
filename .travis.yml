@@ -1,37 +1,25 @@
 language: python
 python:
-    - "2.6"
-    - "2.7"
-    - "3.2"
-    - "3.3"
-    - "3.4"
-    - "3.5"
     - "3.6"
     - "3.7"
     - "3.8"
 
-env:
-    - PEP8_IGNORE=""
-
 # commands to install dependencies
 install:
-    # - sudo apt-get install -qq libatlas-dev liblapack-dev gfortran
-    # - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then sudo apt-get install -qq python-numpy ; fi
-    # - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "3" ]; then sudo apt-get install -qq python3-numpy ; fi
     - pip install --upgrade pip
-    - pip install coverage flake8 numpy sympy pytest
+    - pip install coverage flake8 numpy sympy pytest black
     - pip install -e .
 
 # commands to run tests
 # require 100% coverage (not including test files) to pass Travis CI test
 script:
     - coverage run --branch -m pytest
-    - coverage report --show-missing --fail-under=100
     - flake8
-    # - pep8 --ignore=$PEP8_IGNORE --exclude=conf.py -r --show-source .
+    - black eqpy --check --diff
 
 # load coverage status to https://coveralls.io
 after_success:
+    - coverage report --show-missing
     - pip install coveralls
     - coveralls
 

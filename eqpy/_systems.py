@@ -1,7 +1,6 @@
 import itertools
 import sympy
 
-from ._compatibility import range, integer_types, ellipsis_type
 from ._utils import isiterable
 
 
@@ -63,7 +62,7 @@ class BaseSystem(object):
             or ""
         )
 
-        if isinstance(name, integer_types):
+        if isinstance(name, int):
             # all integers are currently treated as dummy variables
             fullname = prefix + str(name) + suffix
             symbol = sympy.Dummy(fullname)
@@ -105,9 +104,9 @@ class System(object):
         self[...].equation(name, value)
 
     def __getitem__(self, key):
-        if isinstance(key, ellipsis_type):
+        if key is Ellipsis:
             return self.__dict__[...]
-        elif isinstance(key, integer_types):
+        elif isinstance(key, int):
             return self[...].symbol(key)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):
             return self[...].equations[key]
@@ -120,7 +119,7 @@ class System(object):
             return self[...].userdict[key]
 
     def __setitem__(self, key, value):
-        if isinstance(key, integer_types):
+        if isinstance(key, int):
             symbol = self[...].symbol(key)
             self[...].equation(symbol, value)
         elif isinstance(key, (sympy.Symbol, sympy.Dummy)):

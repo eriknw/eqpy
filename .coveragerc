@@ -1,4 +1,3 @@
 [run]
 omit =
     eqpy/tests/test*.py
-    eqpy/_compatibility.py
