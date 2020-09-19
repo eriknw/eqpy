@@ -1,5 +1,7 @@
+import builtins
+import sympy
 from sympy import (Abs, Add, arg, cos, exp, floor, I, im, log, Mod, Mul, oo,
-                   nan, Pow, Rational, re, S, sign, sin, sqrt, StrictLessThan)
+                   nan, prod, Pow, Rational, re, real_root, S, sign, sin, sqrt, StrictLessThan)
 from functools import reduce
 
 
@@ -83,6 +85,10 @@ def isnan(x):
     return x == nan
 
 
+def isqrt(x):
+    return floor(sqrt(x))
+
+
 def ldexp(x, i):
     """ldexp(x, i)
 
@@ -127,7 +133,22 @@ def modf(x):
     return (signx * Mod(absx, 1), signx * floor(absx))
 
 
+def prod(iterables, start=1):
+    return sympy.prod(iterables, start=start)
+
+
 # cmath
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    a = S(a)
+    b = S(b)
+    if a == b:
+        return True
+    if isinf_complex(Abs(a)) or isinf_complex(Abs(b)):
+        return False
+    diff = Abs(a - b)
+    return diff <= rel_tol * Abs(a) or diff <= rel_tol * Abs(b) or diff <= abs_tol
+
+
 def isfinite_complex(x):
     """isfinite(z) -> bool
     Return True if both the real and imag parts of z are finite, else False.
@@ -170,12 +191,20 @@ def rect(r, phi):
 
 
 # numpy
+def cbrt(x):
+    return real_root(x, 3)
+
+
 def divide(x1, x2):
     """divide(x1, x2)
 
     Divide arguments.
     """
     return Rational(x1, x2)
+
+
+def divmod(x, y):
+    return builtins.divmod(S(x), S(y))
 
 
 def exp2(x):
@@ -216,6 +245,10 @@ def negative(x):
     Same as -x.
     """
     return Mul(-1, x)
+
+
+def positive(x):
+    return +S(x)
 
 
 def reciprocal(x):
@@ -260,10 +293,12 @@ mathtosympy = {
     'atan2': 'atan2',
     'atanh': 'atanh',
     'ceil': 'ceiling',
+    'comb': 'binomial',
     'copysign': copysign,
     'cos': 'cos',
     'cosh': 'cosh',
     'degrees': 'deg',
+    'dist': hypot,
     'e': 'E',
     'erf': 'erf',
     'erfc': 'erfc',
@@ -276,10 +311,14 @@ mathtosympy = {
     'frexp': frexp,
     'fsum': fsum,
     'gamma': 'gamma',
+    'gcd': 'gcd',
     'hypot': hypot,
+    'inf': 'oo',
+    'isclose': isclose,
     'isfinite': isfinite,
     'isinf': isinf,
     'isnan': isnan,
+    'isqrt': isqrt,
     'ldexp': ldexp,
     'lgamma': 'loggamma',
     'log': 'log',
@@ -287,14 +326,19 @@ mathtosympy = {
     'log1p': log1p,
     'log2': log2,
     'modf': modf,
+    'nan': nan,
+    'perm': 'ff',
     'pi': 'pi',
     'pow': 'Pow',
+    'prod': prod,
     'radians': 'rad',
+    # 'remainder': remainder,  # what a stupid function!
     'sin': 'sin',
     'sinh': 'sinh',
     'sqrt': 'sqrt',
     'tan': 'tan',
     'tanh': 'tanh',
+    'tau': S('2 * pi'),
     'trunc': 'Integer',
 }
 
@@ -309,11 +353,16 @@ cmathtosympy = {
     'cosh': 'cosh',
     'e': 'E',
     'exp': 'exp',
+    'isclose': isclose,
     'isfinite': isfinite_complex,
     'isinf': isinf_complex,
     'isnan': isnan_complex,
     'log': 'log',
     'log10': log10,
+    'inf': 'oo',
+    'infj': S('oo*I'),
+    'nan': 'nan',
+    'nanj': S('nan*I'),  # currently just `nan`
     'phase': 'arg',
     'pi': 'pi',
     'polar': polar,
@@ -323,6 +372,7 @@ cmathtosympy = {
     'sqrt': 'sqrt',
     'tan': 'tan',
     'tanh': 'tanh',
+    'tau': S('2 * pi'),
 }
 
 numpytosympy = {
@@ -338,6 +388,7 @@ numpytosympy = {
     'arctan2': 'atan2',
     'arctanh': 'atanh',
     # `bitwise_{and,not,or,xor}` SKIPPED
+    'cbrt': cbrt,
     'ceil': 'ceiling',
     'conj': 'conjugate',
     'conjugate': 'conjugate',
@@ -347,6 +398,7 @@ numpytosympy = {
     'deg2rad': 'rad',
     'degrees': 'deg',
     'divide': divide,
+    'divmod': divmod,
     'e': 'E',
     'equal': 'Equality',
     'euler_gamma': 'EulerGamma',
@@ -354,14 +406,17 @@ numpytosympy = {
     'exp2': exp2,
     'expm1': expm1,
     'fabs': 'Abs',
+    'float_power': 'Pow',
     'floor': 'floor',
     'floor_divide': floor_divide,
     'fmax': 'Max',
     'fmin': 'Min',
     'fmod': 'Mod',
     'frexp': frexp,
+    'gcd': 'gcd',
     'greater': 'StrictGreaterThan',
     'greater_equal': 'GreaterThan',
+    'heaviside': 'Heaviside',
     'hypot': hypot,
     'imag': 'im',
     'inf': 'oo',
@@ -370,6 +425,8 @@ numpytosympy = {
     'isfinite': isfinite_complex,
     'isinf': isinf_complex,
     'isnan': isnan_complex,
+    # `isnat` SKIPPED
+    'lcm': 'lcm',
     'ldexp': ldexp,
     # `left_shift` SKIPPED
     'less': 'StrictLessThan',
@@ -384,6 +441,7 @@ numpytosympy = {
     'logical_not': 'Not',
     'logical_or': 'Or',
     'logical_xor': 'Xor',
+    # `matmul` SKIPPED
     'maximum': 'Max',
     'minimum': 'Min',
     'mod': 'Mod',
@@ -394,6 +452,7 @@ numpytosympy = {
     # `nextafter` SKIPPED
     'not_equal': 'Ne',
     'pi': 'pi',
+    'positive': positive,
     'power': 'Pow',
     'rad2deg': 'deg',
     'radians': 'rad',

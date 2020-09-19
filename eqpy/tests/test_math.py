@@ -10,7 +10,7 @@ from eqpy.math import (
 )
 from eqpy._utils import isnear
 
-skip = ['fmod']
+skip = {'fmod', 'remainder'}
 
 
 def test_alldefined():

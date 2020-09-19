@@ -19,7 +19,7 @@ from eqpy.numpy import (
 
 def test_alldefined():
     skipped = ['bitwise_and', 'bitwise_not', 'bitwise_or', 'bitwise_xor',
-               'invert', 'left_shift', 'nextafter', 'right_shift', 'rint',
+               'invert', 'isnat', 'left_shift', 'matmul', 'nextafter', 'right_shift', 'rint',
                'spacing']
     for name, value in sorted(numpy.__dict__.items()):
         if isinstance(value, numpy.ufunc) and name not in skipped:

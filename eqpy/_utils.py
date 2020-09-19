@@ -1,3 +1,4 @@
+import cmath
 from ._compatibility import zip
 
 
@@ -23,7 +24,7 @@ def isnear(a, b, rtol=1e-05, atol=1e-08):
     try:
         return bool(abs(a - b) < atol + rtol*abs(b))
     except TypeError:
-        return False
+        return a == b
 
 
 def isdunder(name):

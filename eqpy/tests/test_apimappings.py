@@ -5,10 +5,10 @@ import random
 import numpy
 import sympy
 from eqpy._apimappings import (
-    mathtosympy, cmathtosympy, numpytosympy, sympymappings, copysign, divide,
-    exp2, expm1, floor_divide, frexp, fsum, hypot, isfinite,
-    isfinite_complex, isinf, isinf_complex, isnan, isnan_complex, ldexp, log10,
-    log1p, log2, logaddexp, logaddexp2, modf, negative, polar, reciprocal,
+    mathtosympy, cmathtosympy, numpytosympy, sympymappings, cbrt, copysign, divide,
+    divmod, exp2, expm1, floor_divide, frexp, fsum, hypot, isclose, isfinite,
+    isfinite_complex, isinf, isinf_complex, isnan, isnan_complex, isqrt, ldexp, log10,
+    log1p, log2, logaddexp, logaddexp2, modf, negative, polar, positive, prod, reciprocal,
     rect, signbit, square, subtract)
 from eqpy._utils import isnear
 from eqpy._compatibility import zip
@@ -17,8 +17,10 @@ from eqpy._compatibility import zip
 
 # domains used during tests
 domains = {
+    cbrt: 'nan[-inf:inf]',
     copysign: ('[-inf:inf]', 'nonzero[-inf:inf]'),
     divide: ('float(-inf:inf)', 'nonzero float(-inf:inf)'),
+    divmod: ('[-inf:inf]', 'nonzero[-inf:inf]'),
     exp2: '[-inf:smallinf]',
     expm1: '[-inf:smallinf]',
     floor_divide: ('float(-inf:inf)', 'int(0:inf)'),
@@ -26,12 +28,14 @@ domains = {
     frexp: '(-inf:inf)',
     fsum: 'iterable(-inf:inf)',
     hypot: ('[-inf:inf]', '[-inf:inf]'),
+    isclose: ('[-inf:inf]', '[-inf:inf]'),
     isfinite: 'nan[-inf:inf]',
     isfinite_complex: 'any',
     isinf: 'nan[-inf:inf]',
     isinf_complex: 'any',
     isnan: 'nan[-inf:inf]',
     isnan_complex: 'any',
+    isqrt: 'int[0:inf)',
     ldexp: ('[-inf:inf]', 'int(-smallinf:smallinf)'),
     log10: '(0:inf]',
     log1p: '(-1:inf]',
@@ -41,6 +45,8 @@ domains = {
     modf: '(-inf:inf)',
     negative: '[-inf:inf]',
     polar: 'complex nonzero',
+    positive: 'any',
+    prod: 'iterable[-inf:inf]',
     reciprocal: 'nonzero[-1:1]',
     rect: ('(-inf:inf)', '(-inf:inf)'),
     signbit: '[-inf:inf]',
@@ -48,9 +54,10 @@ domains = {
     subtract: ('(-inf:inf)', '(-inf:inf)'),
     'Abs': '[-inf:inf]',
     'Add': ('(-inf:inf)', '(-inf:inf)'),
-    'And': ('[-inf:inf]', '[-inf:inf]'),
+    'And': ('bool', 'bool'),
     'Equality': ('[-inf:inf]', '[-inf:inf]'),
     'GreaterThan': ('(-inf:inf)', '(-inf:inf)'),
+    'Heaviside': ('[-inf:inf]', '[-inf:inf]'),
     'Integer': '(-inf:inf)',
     'LessThan': ('[-inf:inf]', '[-inf:inf]'),
     'Max': ('[-inf:inf]', '[-inf:inf]'),
@@ -59,7 +66,7 @@ domains = {
     'Mul': ('nonzero(-inf:inf)', '[-inf:inf]'),
     'Ne': ('[-inf:inf]', '[-inf:inf]'),
     'Not': '[-inf:inf]',
-    'Or': ('[-inf:inf]', '[-inf:inf]'),
+    'Or': ('bool', 'bool'),
     'Pow': ('[-smallinf:smallinf]', 'int[0:inf)'),
     'StrictGreaterThan': ('(-inf:inf)', '(-inf:inf)'),
     'StrictLessThan': ('(-inf:inf)', '(-inf:inf)'),
@@ -72,6 +79,7 @@ domains = {
     'atan': '[-inf:inf]',
     'atan2': ('nonzero(-inf:inf)', 'nonzero(-inf:inf)'),
     'atanh': '(-1:1)',
+    'binomial': ('int[0:smallinf)', 'int[0:smallinf)'),
     'ceiling': '(-inf:inf)',
     'conjugate': 'complex',
     'cos': '(-inf:inf)',
@@ -81,9 +89,12 @@ domains = {
     'erfc': '[-inf:inf]',
     'exp': '[-inf:smallinf]',
     'factorial': 'int[0:smallinf)',
+    'ff': ('int[0:smallinf)', 'int[0:smallinf)'),
     'floor': '(-inf:inf)',
     'gamma': '(0:smallinf]',
+    'gcd': ('int(-smallinf:smallinf)', 'int(-smallinf:smallinf)'),
     'im': 'complex',
+    'lcm': ('int(-smallinf:smallinf)', 'int(-smallinf:smallinf)'),
     'log': '(0:inf]',
     'loggamma': '(0:inf]',
     'rad': '[-inf:inf]',
@@ -102,6 +113,9 @@ constants = [
     'nan',
     'oo',
     'pi',
+    sympy.S('2 * pi'),
+    sympy.S('nan*I'),
+    sympy.S('oo*I'),
 ]
 
 modules = {
@@ -111,9 +125,9 @@ modules = {
 }
 
 skip = {
-    'math': ['erf', 'erfc', 'expm1', 'gamma', 'isfinite', 'lgamma', 'log2'],
-    'cmath': ['isfinite'],
-    'numpy': [],
+    'math': {'erf', 'erfc', 'expm1', 'gamma', 'isfinite', 'lgamma', 'log2'},
+    'cmath': {'isfinite'},
+    'numpy': {'divmod'},
 }
 
 inf = float('inf')
@@ -127,6 +141,7 @@ reals = integers + [
 extended_reals = reals + [inf, -inf]
 complexes = list(complex(x, y) for x in reals for y in reals)
 anys = extended_reals + complexes + [nan]
+bools = [True, False]
 smallinf = 10
 
 randomstate = random.getstate()
@@ -148,6 +163,8 @@ def get_domain(domain):
         return [nums]
     if domain == 'any':
         return [anys]
+    if domain == 'bool':
+        return [bools]
 
     excludelower = '(' in domain
     if not excludelower:
@@ -198,26 +215,48 @@ def test_domains():
         if sympyfunc in constants:
             continue
         mappings = sympymappings[sympyfunc]
-        domain = get_domain(domains[sympyfunc])
+        try:
+            domain = get_domain(domains[sympyfunc])
+        except Exception:
+            print(sympyfunc, type(sympyfunc))
+            raise
         if not callable(sympyfunc):
             sympyfunc = getattr(sympy, sympyfunc)
         for args in zip(*domain):
-            sympyval = sympyfunc(*args)
+            try:
+                sympyval = sympyfunc(*args)
+            except Exception:
+                print(sympyfunc, args)
+                raise
             for othermodule, othername in mappings.items():
+                if othername in skip[othermodule]:
+                    continue
                 otherfunc = getattr(modules[othermodule], othername, None)
-                if otherfunc is None and othername not in skip[othermodule]:
+                if otherfunc is None:  #  and othername not in skip[othermodule]:
                     print(othermodule, othername)
                     getattr(modules[othermodule], othername)
                 if otherfunc is None:
                     continue
-                otherval = otherfunc(*args)
-                res1 = isnear(sympyval, otherval)
-                res2 = isinf(sympyval) and isinf(otherval)
-                res3 = isnan(sympyval) and isnan(otherval)
-                res4 = otherval == sympyval
-                if not (res1 or res2 or res3 or res4):
-                    print(othermodule, othername, args, sympyval, otherval)
-                assert res1 or res2 or res3 or res4
+                try:
+                    otherval = otherfunc(*args)
+                except Exception:
+                    print(otherfunc, args)
+                    raise
+                def check(sympyval, otherval):
+                    res1 = isnear(sympyval, otherval)
+                    res2 = isinf(sympyval) and isinf(otherval)
+                    res3 = isnan(sympyval) and isnan(otherval)
+                    res4 = otherval == sympyval
+                    res5 = hasattr(sympyval, 'n') and isnear(otherval, sympyval.n())
+                    if not (res1 or res2 or res3 or res4):
+                        print(othermodule, othername, args, sympyval, otherval)
+                    assert res1 or res2 or res3 or res4 or res5
+                if type(sympyval) is tuple:
+                    assert len(sympyval) == len(otherval)
+                    for val1, val2 in zip(sympyval, otherval):
+                        check(val1, val2)
+                else:
+                    check(sympyval, otherval)
 
 
 def test_domains_complete():
@@ -227,10 +266,13 @@ def test_domains_complete():
 
 def test_constants():
     for name in constants:
-        constant = getattr(sympy, name)
+        if isinstance(name, str):
+            constant = getattr(sympy, name)
+        else:
+            constant = name
         for key, val in sympymappings[name].items():
             other = getattr(modules[key], val)
-            if name == 'nan':
+            if name == 'nan' or constant is sympy.nan:
                 assert not isnear(constant, other)
                 assert constant != other
                 assert other != constant
@@ -241,6 +283,11 @@ def test_constants():
                 assert isinf(other)
                 assert not isfinite(constant)
                 assert not isfinite(other)
+            elif constant == sympy.S('oo * I'):
+                assert isinf_complex(constant)
+                assert isinf_complex(other)
+                assert not isfinite_complex(constant)
+                assert not isfinite_complex(other)
             else:
                 assert isnear(constant, other)
 
